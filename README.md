@@ -125,7 +125,7 @@
 
 ### **Step 1: Clone Repository**
 
-````bash
+
 git clone https://github.com/Zahur13/Weather-Forecast.git
 cd Weather-Forecast-Enhanced
 
@@ -802,3 +802,4 @@ Made with ❤️ by Zahur Shaikh
 
 </div> ```
 ````
+````bash
