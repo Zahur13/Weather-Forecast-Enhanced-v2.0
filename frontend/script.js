@@ -3,9 +3,9 @@
    ============================================ */
 
 const weatherApp = {
-  // Configuration
-  apiEndpoint: "/api/weather", // Proxy endpoint (backend handles API key)
-  units: "metric", // 'metric' or 'imperial'
+  // Update API endpoint
+  apiEndpoint: "/api", // Changed from '/api/weather'
+  units: "metric",
   isCelsius: true,
 
   // State Management
@@ -662,6 +662,93 @@ const weatherApp = {
   loadDefaultCity: function () {
     const lastCity = localStorage.getItem("lastCity") || "London";
     this.fetchWeather(lastCity);
+  },
+  // Update fetchWeather function
+  fetchWeather: async function (city) {
+    this.showLoading();
+
+    try {
+      // Updated URL
+      const response = await fetch(
+        `${this.apiEndpoint}/current?city=${encodeURIComponent(city)}&units=${
+          this.units
+        }`
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "City not found");
+      }
+
+      const data = await response.json();
+      this.currentCity = city;
+      this.displayWeather(data);
+
+      this.fetchForecast(city);
+      this.fetchAirQuality(data.coord.lat, data.coord.lon);
+      this.updateDateTime();
+      this.updateWeatherBackground(data.weather[0].main, data.weather[0].icon);
+    } catch (error) {
+      console.error("Fetch error:", error);
+      this.showError(error.message || "City not found. Please try again.");
+    }
+  },
+
+  fetchWeatherByCoords: async function (lat, lon) {
+    this.showLoading();
+
+    try {
+      const response = await fetch(
+        `${this.apiEndpoint}/current?lat=${lat}&lon=${lon}&units=${this.units}`
+      );
+
+      if (!response.ok) throw new Error("Failed to fetch weather");
+
+      const data = await response.json();
+
+      this.currentCity = data.name;
+      this.displayWeather(data);
+      this.fetchForecast(data.name);
+      this.fetchAirQuality(lat, lon);
+      this.updateDateTime();
+      this.updateWeatherBackground(data.weather[0].main, data.weather[0].icon);
+    } catch (error) {
+      this.showError("Unable to fetch weather data.");
+    }
+  },
+
+  fetchForecast: async function (city) {
+    try {
+      const response = await fetch(
+        `${this.apiEndpoint}/forecast?city=${encodeURIComponent(city)}&units=${
+          this.units
+        }`
+      );
+
+      if (!response.ok) throw new Error("Forecast fetch failed");
+
+      const data = await response.json();
+
+      this.displayHourlyForecast(data.list.slice(0, 8));
+      this.display5DayForecast(data.list);
+    } catch (error) {
+      console.error("Forecast fetch failed:", error);
+    }
+  },
+
+  fetchAirQuality: async function (lat, lon) {
+    try {
+      const response = await fetch(
+        `${this.apiEndpoint}/air?lat=${lat}&lon=${lon}`
+      );
+
+      if (!response.ok) throw new Error("Air quality fetch failed");
+
+      const data = await response.json();
+      this.displayAirQuality(data.list[0]);
+    } catch (error) {
+      console.error("Air quality fetch failed:", error);
+    }
   },
 };
 
