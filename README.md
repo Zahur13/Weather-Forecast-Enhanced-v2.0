@@ -783,7 +783,7 @@ LinkedIn: https://www.linkedin.com/in/jahurhusen-shaikh-a309361b9/
 📞 Support
 If you have any questions or need help:
 
-📧 Email: your.email@example.com
+📧 Email: zbshaikh1326@gmail.com
 💬 Open an issue
 📖 Check the wiki
 ⭐ Show Your Support
@@ -800,6 +800,5 @@ Made with ❤️ by Zahur Shaikh
 
 ⬆ Back to Top
 
-</div> ```
-````
+</div>
 ````bash
